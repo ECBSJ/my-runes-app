@@ -17,18 +17,46 @@ import {
   CollapsibleTrigger
 } from "@/components/ui/collapsible"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
+import {
+  AddressBalances,
+  AddressActivityForRune,
+  BlockActivity
+} from "@/lib/models"
+import {
+  getAddressBalances,
+  getYourRunesActivity,
+  getBlockActivity,
+  getApiStatus
+} from "../utils/data-processing"
 import axios from "axios"
 
-const getAddressBalances = async () => {
-  let result = await axios.get("/api/address-balances")
-  console.log(result.data)
-}
-
-export default function Dashboard() {
+export default async function Dashboard() {
   const [isOpen, setIsOpen] = useState(false)
+  const [addressBalances, setAddressBalances] = useState<AddressBalances[]>()
+  const [addressActivityForRune, setAddressActivityForRune] =
+    useState<AddressActivityForRune[]>()
+  const [blockActivity, setBlockActivity] = useState<BlockActivity[]>()
+  const [totalRunesActivity, setTotalRunesActivity] = useState<Number>()
+
+  async function retrieveAllData() {
+    let response = await getAddressBalances()
+    setAddressBalances(response)
+
+    let response1 = await getYourRunesActivity(response)
+    setAddressActivityForRune(response1)
+
+    let apiStatus = await getApiStatus()
+
+    let { results, totalRunesActivity, mostFrequentRunes } =
+      await getBlockActivity(apiStatus.block_height.toString())
+    setBlockActivity(results)
+    setTotalRunesActivity(totalRunesActivity)
+
+    // let response5 = await getMostFrequestRunesData(mostFrequentRunes)
+  }
 
   useEffect(() => {
-    getAddressBalances()
+    retrieveAllData()
   }, [])
 
   return (
@@ -100,8 +128,10 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Your Favorite Runes</CardTitle>
-            <CardDescription>Card Description</CardDescription>
+            <CardTitle>Suggested Runes</CardTitle>
+            <CardDescription>
+              This Runes seems to be recently active.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p>Card Content</p>

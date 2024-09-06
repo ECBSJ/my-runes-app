@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import ModeToggle from "./dark-mode-toggle"
 
 export default function Header() {
   return (
@@ -10,12 +11,15 @@ export default function Header() {
           width="40"
           height="40"
         />
-        <span>Activity</span>
-        <span>Balances</span>
-        <span>Block</span>
-        <span>Suggested</span>
+        <Button variant="link">Activity</Button>
+        <Button variant="link">Balances</Button>
+        <Button variant="link">Block</Button>
+        <Button variant="link">Suggested</Button>
       </div>
-      <Button>Connect Wallet</Button>
+      <div className="flex items-center justify-between gap-x-8">
+        <ModeToggle />
+        <Button>Connect Wallet</Button>
+      </div>
     </header>
   )
 }
