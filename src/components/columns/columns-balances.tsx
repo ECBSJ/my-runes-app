@@ -12,41 +12,45 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 
-export type Payment = {
+type Data = {
+  address: string
+  balance: number
   id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
+  name: string
+  spaced_name: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Data>[] = [
   {
-    accessorKey: "status",
-    header: "Status"
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "spaced_name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Runes
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     }
   },
   {
-    accessorKey: "amount",
+    accessorKey: "id",
+    header: "ID"
+  },
+  {
+    accessorKey: "name",
+    header: "Name"
+  },
+  {
+    accessorKey: "balance",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
+      const balance = parseFloat(row.getValue("balance"))
       const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD"
-      }).format(amount)
+        style: "decimal"
+      }).format(balance)
 
       return <div className="text-right font-medium">{formatted}</div>
     }
@@ -54,7 +58,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original
+      const data = row.original
 
       return (
         <DropdownMenu>
@@ -67,13 +71,13 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(data.id)}
             >
-              Copy payment ID
+              Copy Runes ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View Etching</DropdownMenuItem>
+            <DropdownMenuItem>View Transaction</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

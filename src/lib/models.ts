@@ -1,26 +1,22 @@
-export interface AddressBalances {
+export type AddressBalances = {
   address: string
   balance: number
-  rune: {
-    id: string
-    name: string
-    spaced_name: string
-  }
+  id: string
+  name: string
+  spaced_name: string
 }
 
 export function addressBalancesToClient(data: any) {
   return {
     address: data.address,
     balance: +data.balance,
-    rune: {
-      id: data.rune.id,
-      name: data.rune.name,
-      spaced_name: data.rune.spaced_name
-    }
+    id: data.rune.id,
+    name: data.rune.name,
+    spaced_name: data.rune.spaced_name
   }
 }
 
-export interface AddressActivityForRune {
+export type AddressActivityForRune = {
   rune_id: string
   address: string
   amount: number
@@ -42,7 +38,7 @@ export function addressActivityForRuneToClient(data: any, id: string) {
   }
 }
 
-export interface BlockActivity {
+export type BlockActivity = {
   id: string
   name: string
   spaced_name: string
@@ -66,8 +62,45 @@ export function blockActivityToClient(data: any) {
   }
 }
 
-export interface ApiStatus {
+export type ApiStatus = {
   server_version: string
   status: string
   block_height: number
+}
+
+export type Etching = {
+  id: string
+  name: string
+  spaced_name: string
+  number: number
+  divisibility: number
+  symbol: string
+  turbo: boolean
+  mint_terms: {
+    amount: string
+    cap: string
+    height_start: number
+    height_end: number
+    offset_start: number
+    offset_end: number
+  }
+  supply: {
+    current: string
+    minted: string
+    total_mints: string
+    mint_percentage: string
+    mintable: boolean
+    burned: string
+    total_burns: string
+    premine: string
+  }
+  location: {
+    block_hash: string
+    block_height: number
+    tx_id: string
+    tx_index: number
+    vout: number
+    output: string
+    timestamp: number
+  }
 }

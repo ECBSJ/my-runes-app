@@ -70,11 +70,19 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={event =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+          placeholder="Filter By Runes Name or ID..."
+          value={
+            table.getColumn("name")
+              ? (table.getColumn("name")?.getFilterValue() as string)
+              : (table.getColumn("rune_id")?.getFilterValue() as string)
           }
+          onChange={event => {
+            if (table.getColumn("name")) {
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            } else {
+              table.getColumn("rune_id")?.setFilterValue(event.target.value)
+            }
+          }}
           className="max-w-sm"
         />
         <DropdownMenu>

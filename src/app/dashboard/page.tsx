@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import {
   Card,
@@ -9,8 +10,9 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,41 +20,53 @@ import {
 } from "@/components/ui/collapsible"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
 import {
-  AddressBalances,
+  type AddressBalances,
   AddressActivityForRune,
-  BlockActivity
+  type BlockActivity,
+  Etching,
+  ApiStatus
 } from "@/lib/models"
 import {
   getAddressBalances,
   getYourRunesActivity,
   getBlockActivity,
-  getApiStatus
+  getApiStatus,
+  getRunesEtchingInfo
 } from "../utils/data-processing"
-import axios from "axios"
+import DashboardLineItem from "@/components/dashboard-line-item"
+import { userSession } from "../utils/ConnectWallet"
 
 export default async function Dashboard() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen_Card1, setIsOpen_Card1] = useState(false)
+  const [isOpen_Card2, setIsOpen_Card2] = useState(false)
+  const [isOpen_Card4, setIsOpen_Card4] = useState(false)
   const [addressBalances, setAddressBalances] = useState<AddressBalances[]>()
   const [addressActivityForRune, setAddressActivityForRune] =
     useState<AddressActivityForRune[]>()
   const [blockActivity, setBlockActivity] = useState<BlockActivity[]>()
   const [totalRunesActivity, setTotalRunesActivity] = useState<Number>()
+  const [mostFrequentRunes, setMostFrequentRunes] = useState<Etching>()
+  const [apiStatus, setApiStatus] = useState<ApiStatus>()
 
   async function retrieveAllData() {
-    let response = await getAddressBalances()
+    let address: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
+    
+    let response = await getAddressBalances(address)
     setAddressBalances(response)
 
     let response1 = await getYourRunesActivity(response)
     setAddressActivityForRune(response1)
 
     let apiStatus = await getApiStatus()
+    setApiStatus(apiStatus)
 
     let { results, totalRunesActivity, mostFrequentRunes } =
       await getBlockActivity(apiStatus.block_height.toString())
     setBlockActivity(results)
     setTotalRunesActivity(totalRunesActivity)
 
-    // let response5 = await getMostFrequestRunesData(mostFrequentRunes)
+    let response5 = await getRunesEtchingInfo(mostFrequentRunes)
+    setMostFrequentRunes(response5)
   }
 
   useEffect(() => {
@@ -60,8 +74,8 @@ export default async function Dashboard() {
   }, [])
 
   return (
-    <main className="flex h-[968px] items-start justify-center gap-1 p-24">
-      <div className="flex flex-col flex-1 gap-1">
+    <main className="flex h-[968px] items-start justify-center gap-2 p-24">
+      <div className="flex flex-col flex-1 gap-2">
         <Card>
           <CardHeader>
             <CardTitle>Your Runes Activity</CardTitle>
@@ -69,8 +83,8 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent>
             <Collapsible
-              open={isOpen}
-              onOpenChange={setIsOpen}
+              open={isOpen_Card1}
+              onOpenChange={setIsOpen_Card1}
               className="space-y-2"
             >
               <div className="flex items-center justify-between space-x-4 px-4">
@@ -84,40 +98,71 @@ export default async function Dashboard() {
                   </Button>
                 </CollapsibleTrigger>
               </div>
-              <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                <span>Runes Name</span>
-                <Separator orientation="horizontal" />
-                <span>receive</span>
-                <Separator orientation="horizontal" />
-
-                <span>859104</span>
-                <Separator orientation="horizontal" />
-
-                <span>10.00000</span>
-              </div>
+              <DashboardLineItem
+                a={
+                  addressActivityForRune
+                    ? addressActivityForRune[0].rune_id
+                    : "."
+                }
+                b={
+                  addressActivityForRune
+                    ? addressActivityForRune[0].operation
+                    : "."
+                }
+                c={
+                  addressActivityForRune
+                    ? addressActivityForRune[0].block_height
+                    : "."
+                }
+                d={
+                  addressActivityForRune ? addressActivityForRune[0].amount : 0
+                }
+              />
               <CollapsibleContent className="space-y-2">
-                <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                  <span>Runes Name</span>
-                  <Separator orientation="horizontal" />
-                  <span>receive</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>859104</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>10.00000</span>
-                </div>
-                <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                  <span>Runes Name</span>
-                  <Separator orientation="horizontal" />
-                  <span>receive</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>859104</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>10.00000</span>
-                </div>
+                <DashboardLineItem
+                  a={
+                    addressActivityForRune
+                      ? addressActivityForRune[1].rune_id
+                      : "."
+                  }
+                  b={
+                    addressActivityForRune
+                      ? addressActivityForRune[1].operation
+                      : "."
+                  }
+                  c={
+                    addressActivityForRune
+                      ? addressActivityForRune[1].block_height
+                      : "."
+                  }
+                  d={
+                    addressActivityForRune
+                      ? addressActivityForRune[1].amount
+                      : 0
+                  }
+                />
+                <DashboardLineItem
+                  a={
+                    addressActivityForRune
+                      ? addressActivityForRune[2].rune_id
+                      : "."
+                  }
+                  b={
+                    addressActivityForRune
+                      ? addressActivityForRune[2].operation
+                      : "."
+                  }
+                  c={
+                    addressActivityForRune
+                      ? addressActivityForRune[2].block_height
+                      : "."
+                  }
+                  d={
+                    addressActivityForRune
+                      ? addressActivityForRune[2].amount
+                      : 0
+                  }
+                />
               </CollapsibleContent>
             </Collapsible>
           </CardContent>
@@ -130,18 +175,46 @@ export default async function Dashboard() {
           <CardHeader>
             <CardTitle>Suggested Runes</CardTitle>
             <CardDescription>
-              This Runes seems to be recently active.
+              Most active Runes in recent Bitcoin block height{" "}
+              {apiStatus?.block_height}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Card Content</p>
+            <p>
+              <span className="font-semibold">
+                {mostFrequentRunes?.spaced_name}
+              </span>{" "}
+              | {mostFrequentRunes?.id}
+            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-8xl">{mostFrequentRunes?.symbol}</span>
+              <Separator orientation="horizontal" />
+
+              <span className="flex flex-col justify-between gap-2">
+                <p className="font-semibold">Current Supply:</p>
+                {mostFrequentRunes?.supply.current}
+              </span>
+            </div>
+            <span className="flex items-center justify-start gap-2">
+              <Badge variant="secondary">
+                {mostFrequentRunes?.supply.mintable ? "Mintable" : "Unmintable"}
+              </Badge>
+              <Badge variant="secondary">
+                {mostFrequentRunes?.turbo ? "Turbo" : "Not Turbo"}
+              </Badge>
+              <Badge variant="secondary">
+                {mostFrequentRunes?.location.block_height}
+              </Badge>
+            </span>
+            <span></span>
           </CardContent>
-          <CardFooter>
-            <p>Card Footer</p>
+          <CardFooter className="flex items-center justify-between">
+            <Button variant="secondary">Secondary</Button>
+            <Button>View More</Button>
           </CardFooter>
         </Card>
       </div>
-      <div className="flex flex-col flex-1 gap-1">
+      <div className="flex flex-col flex-1 gap-2">
         <Card>
           <CardHeader>
             <CardTitle>Your Runes Balances</CardTitle>
@@ -149,8 +222,8 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent>
             <Collapsible
-              open={isOpen}
-              onOpenChange={setIsOpen}
+              open={isOpen_Card2}
+              onOpenChange={setIsOpen_Card2}
               className="space-y-2"
             >
               <div className="flex items-center justify-between space-x-4 px-4">
@@ -164,33 +237,45 @@ export default async function Dashboard() {
                   </Button>
                 </CollapsibleTrigger>
               </div>
-              <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                <span>Icon</span>
-                <Separator orientation="horizontal" />
-                <span>name</span>
-                <Separator orientation="horizontal" />
-                <span>balance</span>
-              </div>
+              <DashboardLineItem
+                a={
+                  addressBalances ? addressBalances[0].spaced_name : "Rune Name"
+                }
+                b={addressBalances ? addressBalances[0].id : "Rune ID"}
+                d={addressBalances ? addressBalances[0].balance : 0}
+              />
               <CollapsibleContent className="space-y-2">
-                <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                  <span>Icon</span>
-                  <Separator orientation="horizontal" />
-                  <span>name</span>
-                  <Separator orientation="horizontal" />
-                  <span>balance</span>
-                </div>
-                <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                  <span>Icon</span>
-                  <Separator orientation="horizontal" />
-                  <span>name</span>
-                  <Separator orientation="horizontal" />
-                  <span>balance</span>
-                </div>
+                <DashboardLineItem
+                  a={
+                    addressBalances
+                      ? addressBalances[1].spaced_name
+                      : "Rune Name"
+                  }
+                  b={addressBalances ? addressBalances[1].id : "Rune ID"}
+                  d={addressBalances ? addressBalances[1].balance : 0}
+                />
+                <DashboardLineItem
+                  a={
+                    addressBalances
+                      ? addressBalances[2].spaced_name
+                      : "Rune Name"
+                  }
+                  b={addressBalances ? addressBalances[2].id : "Rune ID"}
+                  d={addressBalances ? addressBalances[2].balance : 0}
+                />
               </CollapsibleContent>
             </Collapsible>
           </CardContent>
-          <CardFooter>
-            <p>Card Footer</p>
+          <CardFooter className="flex items-center justify-between">
+            <Button variant="secondary">Secondary</Button>
+
+            <Link
+              href={"/dashboard/your-balance"}
+              className={buttonVariants({ variant: "default" })}
+              prefetch={true}
+            >
+              View More
+            </Link>
           </CardFooter>
         </Card>
         <Card>
@@ -202,8 +287,8 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent>
             <Collapsible
-              open={isOpen}
-              onOpenChange={setIsOpen}
+              open={isOpen_Card4}
+              onOpenChange={setIsOpen_Card4}
               className="space-y-2"
             >
               <div className="flex items-center justify-between space-x-4 px-4">
@@ -217,45 +302,32 @@ export default async function Dashboard() {
                   </Button>
                 </CollapsibleTrigger>
               </div>
-              <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                <span>Runes Name</span>
-                <Separator orientation="horizontal" />
-                <span>operation</span>
-                <Separator orientation="horizontal" />
-
-                <span>address</span>
-                <Separator orientation="horizontal" />
-
-                <span>amount</span>
-              </div>
+              <DashboardLineItem
+                a={blockActivity ? blockActivity[0].spaced_name : "."}
+                b={blockActivity ? blockActivity[0].operation : "."}
+                c={blockActivity ? blockActivity[0].tx_id : "."}
+                d={blockActivity ? blockActivity[0].amount : 0}
+              />
               <CollapsibleContent className="space-y-2">
-                <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                  <span>Runes Name</span>
-                  <Separator orientation="horizontal" />
-                  <span>operation</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>address</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>amount</span>
-                </div>
-                <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
-                  <span>Runes Name</span>
-                  <Separator orientation="horizontal" />
-                  <span>operation</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>address</span>
-                  <Separator orientation="horizontal" />
-
-                  <span>amount</span>
-                </div>
+                <DashboardLineItem
+                  a={blockActivity ? blockActivity[1].spaced_name : "."}
+                  b={blockActivity ? blockActivity[1].operation : "."}
+                  c={blockActivity ? blockActivity[1].tx_id : "."}
+                  d={blockActivity ? blockActivity[1].amount : 0}
+                />
+                <DashboardLineItem
+                  a={blockActivity ? blockActivity[2].spaced_name : "."}
+                  b={blockActivity ? blockActivity[2].operation : "."}
+                  c={blockActivity ? blockActivity[2].tx_id : "."}
+                  d={blockActivity ? blockActivity[2].amount : 0}
+                />
               </CollapsibleContent>
             </Collapsible>
           </CardContent>
-          <CardFooter>
-            <p>Card Footer</p>
+          <CardFooter className="flex items-center justify-between">
+            <Button variant="secondary">Secondary</Button>
+
+            <Button>View More</Button>
           </CardFooter>
         </Card>
       </div>

@@ -1,18 +1,55 @@
-import Image from "next/image"
+'use client'
+
+import dynamic from 'next/dynamic';
+import { UserSession } from '@stacks/connect';
+import { useEffect, useState } from 'react';
+import { Button, buttonVariants } from '@/components/ui/button';
+import Link from 'next/link';
+
+const ConnectWallet = dynamic(() => import('@/app/utils/ConnectWallet'), {
+  ssr: false
+});
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex"></div>
+  const [walletSession, setWalletSession] = useState<any>()
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <h1 className="text-5xl">
-          Welcome to your personalized Runes dashboard. <br /> First connect
-          your bitcoin web3 wallet.
-        </h1>
+  useEffect(() => {
+    const userSession = new UserSession()
+    setWalletSession(userSession)
+  }, [])
+
+  function loadUserData() {
+    console.log(walletSession?.loadUserData())
+  }
+
+  if (walletSession?.isUserSignedIn()) {
+    return (
+      <main className="flex min-h-[800px] flex-col items-center justify-center p-10 gap-10 text-center">
+
+      <div className='flex items-center justify-between gap-10 text-left'>
+        <p>🚀 You're connected.</p>
+        <Link
+          href={"/dashboard"}
+          className={buttonVariants({ variant: "default" })}
+          prefetch={true}
+        >
+          View Dashboard
+        </Link>
       </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left"></div>
+    </main>
+    )
+  }
+
+  return (
+    <main className="flex min-h-[800px] flex-col items-center justify-center p-10 gap-10 text-center">
+
+      <h1 className='text-7xl font-bold'>Your <span className='text-orange-500'>Runes</span> <br /> Your App</h1>
+      <div className='flex items-center justify-between gap-10 text-left'>
+        <p>Connect your Bitcoin Web3 wallet <br />to view your Runes dashboard.</p>
+        <ConnectWallet />
+      </div>
+
     </main>
   )
 }

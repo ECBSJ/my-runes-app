@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button"
 import ModeToggle from "./dark-mode-toggle"
+import dynamic from 'next/dynamic';
+
+const ConnectWallet = dynamic(() => import('@/app/utils/ConnectWallet'), {
+  ssr: false
+});
 
 export default function Header() {
+
   return (
     <header className="flex items-center justify-between px-10 pt-10">
       <div className="flex items-center justify-between gap-x-8">
@@ -18,7 +24,7 @@ export default function Header() {
       </div>
       <div className="flex items-center justify-between gap-x-8">
         <ModeToggle />
-        <Button>Connect Wallet</Button>
+        <ConnectWallet />
       </div>
     </header>
   )

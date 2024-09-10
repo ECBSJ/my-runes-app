@@ -1,17 +1,20 @@
 import axios from "axios"
 import {
-  AddressBalances,
+  type AddressBalances,
   addressBalancesToClient,
-  AddressActivityForRune,
+  type AddressActivityForRune,
   addressActivityForRuneToClient,
-  BlockActivity,
+  type BlockActivity,
   blockActivityToClient,
-  ApiStatus
+  type ApiStatus,
+  type Etching
 } from "@/lib/models"
 import { mostFrequent } from "./helpers"
 
-export async function getAddressBalances() {
-  let response = await axios.get("/api/address-balances")
+export async function getAddressBalances(address: string) {
+  let response = await axios.post("/api/address-balances", {
+    address
+  })
 
   let addressBalances: AddressBalances[] = response.data.results.map(
     addressBalancesToClient
@@ -26,7 +29,7 @@ export async function getAddressBalances() {
 
 export async function getYourRunesActivity(data: AddressBalances[]) {
   let responses = data.map(async eachRune => {
-    let id = eachRune.rune.id
+    let id = eachRune.id
     let address = eachRune.address
 
     let response = await axios.post("/api/address-activity", {
@@ -75,4 +78,12 @@ export async function getApiStatus() {
   let api_status: ApiStatus = response.data
 
   return api_status
+}
+
+export async function getRunesEtchingInfo(id: any): Promise<Etching> {
+  let response = await axios.post("/api/get-etching", {
+    id
+  })
+
+  return response.data
 }
