@@ -20,6 +20,7 @@ type Data = {
   block_height: number
   tx_id: string
   timestamp: number
+  symbol: string
 }
 
 export const columns: ColumnDef<Data>[] = [
@@ -60,6 +61,15 @@ export const columns: ColumnDef<Data>[] = [
       }).format(amount)
 
       return <div className="text-right font-medium">{formatted}</div>
+    }
+  },
+  {
+    accessorKey: "symbol",
+    header: "Symbol",
+    cell: ({ row }) => {
+      const symbol: string = row.getValue("symbol")
+
+      return <span className="text-4xl">{symbol}</span>
     }
   },
   {

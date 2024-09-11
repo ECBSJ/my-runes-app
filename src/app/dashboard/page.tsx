@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   Card,
   CardContent,
@@ -34,45 +34,35 @@ import {
   getRunesEtchingInfo
 } from "../utils/data-processing"
 import DashboardLineItem from "@/components/dashboard-line-item"
-import { userSession } from "../utils/ConnectWallet"
+import { useSearchParams } from "next/navigation"
+
+async function retrieveAllData(userAddress: string) {
+  console.log("i ran")
+  
+  let addressBalances = await getAddressBalances(userAddress)
+
+  let addressActivityForRune = await getYourRunesActivity(addressBalances)
+
+  let apiStatus = await getApiStatus()
+
+  let { results, totalRunesActivity, mostFrequentRunes } =
+    await getBlockActivity(apiStatus.block_height.toString())
+
+  let featuredRunes = await getRunesEtchingInfo(mostFrequentRunes)
+
+  return { addressBalances, addressActivityForRune, apiStatus, blockActivity: results, totalActivityCount: totalRunesActivity, featuredRunes }
+}
 
 export default async function Dashboard() {
+  const searchParams = useSearchParams()
+  let userAddress = searchParams.get("userAddress")!
+
   const [isOpen_Card1, setIsOpen_Card1] = useState(false)
   const [isOpen_Card2, setIsOpen_Card2] = useState(false)
   const [isOpen_Card4, setIsOpen_Card4] = useState(false)
-  const [addressBalances, setAddressBalances] = useState<AddressBalances[]>()
-  const [addressActivityForRune, setAddressActivityForRune] =
-    useState<AddressActivityForRune[]>()
-  const [blockActivity, setBlockActivity] = useState<BlockActivity[]>()
-  const [totalRunesActivity, setTotalRunesActivity] = useState<Number>()
-  const [mostFrequentRunes, setMostFrequentRunes] = useState<Etching>()
-  const [apiStatus, setApiStatus] = useState<ApiStatus>()
 
-  async function retrieveAllData() {
-    let address: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
-    
-    let response = await getAddressBalances(address)
-    setAddressBalances(response)
-
-    let response1 = await getYourRunesActivity(response)
-    setAddressActivityForRune(response1)
-
-    let apiStatus = await getApiStatus()
-    setApiStatus(apiStatus)
-
-    let { results, totalRunesActivity, mostFrequentRunes } =
-      await getBlockActivity(apiStatus.block_height.toString())
-    setBlockActivity(results)
-    setTotalRunesActivity(totalRunesActivity)
-
-    let response5 = await getRunesEtchingInfo(mostFrequentRunes)
-    setMostFrequentRunes(response5)
-  }
-
-  useEffect(() => {
-    retrieveAllData()
-  }, [])
-
+  let { addressBalances, addressActivityForRune, apiStatus, blockActivity, totalActivityCount, featuredRunes } = await retrieveAllData(userAddress) 
+  
   return (
     <main className="flex h-[968px] items-start justify-center gap-2 p-24">
       <div className="flex flex-col flex-1 gap-2">
@@ -117,6 +107,10 @@ export default async function Dashboard() {
                 d={
                   addressActivityForRune ? addressActivityForRune[0].amount : 0
                 }
+                e={
+                  addressActivityForRune ? addressActivityForRune[0].symbol : ""
+                }
+
               />
               <CollapsibleContent className="space-y-2">
                 <DashboardLineItem
@@ -140,6 +134,9 @@ export default async function Dashboard() {
                       ? addressActivityForRune[1].amount
                       : 0
                   }
+                  e={
+                    addressActivityForRune ? addressActivityForRune[1].symbol : ""
+                  }
                 />
                 <DashboardLineItem
                   a={
@@ -162,18 +159,32 @@ export default async function Dashboard() {
                       ? addressActivityForRune[2].amount
                       : 0
                   }
+                  e={
+                    addressActivityForRune ? addressActivityForRune[2].symbol : ""
+                  }  
                 />
               </CollapsibleContent>
             </Collapsible>
           </CardContent>
           <CardFooter className="flex items-center justify-between">
             <Button variant="secondary">Secondary</Button>
-            <Button>View More</Button>
+            <Link
+              href={{
+                pathname: "/dashboard/your-activity",
+                query: {
+                  userAddress
+                }
+              }}
+              className={buttonVariants({ variant: "default" })}
+              prefetch={true}
+            >
+              View More
+            </Link>
           </CardFooter>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Suggested Runes</CardTitle>
+            <CardTitle>Featured Runes</CardTitle>
             <CardDescription>
               Most active Runes in recent Bitcoin block height{" "}
               {apiStatus?.block_height}
@@ -182,35 +193,42 @@ export default async function Dashboard() {
           <CardContent>
             <p>
               <span className="font-semibold">
-                {mostFrequentRunes?.spaced_name}
+                {featuredRunes?.spaced_name}
               </span>{" "}
-              | {mostFrequentRunes?.id}
+              | {featuredRunes?.id}
             </p>
-            <div className="flex items-center justify-between">
-              <span className="text-8xl">{mostFrequentRunes?.symbol}</span>
+            <div className="flex items-center justify-between my-4">
+              <span className="text-8xl">{featuredRunes?.symbol}</span>
               <Separator orientation="horizontal" />
 
               <span className="flex flex-col justify-between gap-2">
                 <p className="font-semibold">Current Supply:</p>
-                {mostFrequentRunes?.supply.current}
+                {Number(featuredRunes?.supply.current).toLocaleString()}
               </span>
             </div>
             <span className="flex items-center justify-start gap-2">
               <Badge variant="secondary">
-                {mostFrequentRunes?.supply.mintable ? "Mintable" : "Unmintable"}
+                {featuredRunes?.supply.mintable ? "Mintable" : "Unmintable"}
               </Badge>
               <Badge variant="secondary">
-                {mostFrequentRunes?.turbo ? "Turbo" : "Not Turbo"}
+                {featuredRunes?.turbo ? "Turbo" : "Not Turbo"}
               </Badge>
               <Badge variant="secondary">
-                {mostFrequentRunes?.location.block_height}
+                {featuredRunes?.location.block_height}
               </Badge>
             </span>
             <span></span>
           </CardContent>
           <CardFooter className="flex items-center justify-between">
             <Button variant="secondary">Secondary</Button>
-            <Button>View More</Button>
+            <Link
+              href={`https://magiceden.us/runes/${featuredRunes?.spaced_name}`}
+              className={buttonVariants({ variant: "default" })}
+              prefetch={true}
+              target="_blank"
+            >
+              View More
+            </Link>
           </CardFooter>
         </Card>
       </div>
@@ -218,7 +236,7 @@ export default async function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Your Runes Balances</CardTitle>
-            <CardDescription>Balances of your top 3 Runes</CardDescription>
+            <CardDescription>Snapshot of your Runes balances</CardDescription>
           </CardHeader>
           <CardContent>
             <Collapsible
@@ -239,29 +257,33 @@ export default async function Dashboard() {
               </div>
               <DashboardLineItem
                 a={
-                  addressBalances ? addressBalances[0].spaced_name : "Rune Name"
+                  addressBalances ? addressBalances[0].spaced_name : "."
                 }
-                b={addressBalances ? addressBalances[0].id : "Rune ID"}
+                b={addressBalances ? addressBalances[0].id : "."}
                 d={addressBalances ? addressBalances[0].balance : 0}
+                e={addressBalances ? addressBalances[0].symbol : "."}
               />
               <CollapsibleContent className="space-y-2">
                 <DashboardLineItem
                   a={
                     addressBalances
                       ? addressBalances[1].spaced_name
-                      : "Rune Name"
+                      : "."
                   }
-                  b={addressBalances ? addressBalances[1].id : "Rune ID"}
+                  b={addressBalances ? addressBalances[1].id : "."}
                   d={addressBalances ? addressBalances[1].balance : 0}
+                  e={addressBalances ? addressBalances[1].symbol : "."}
+
                 />
                 <DashboardLineItem
                   a={
                     addressBalances
                       ? addressBalances[2].spaced_name
-                      : "Rune Name"
+                      : "."
                   }
-                  b={addressBalances ? addressBalances[2].id : "Rune ID"}
+                  b={addressBalances ? addressBalances[2].id : "."}
                   d={addressBalances ? addressBalances[2].balance : 0}
+                  e={addressBalances ? addressBalances[2].symbol : "."}
                 />
               </CollapsibleContent>
             </Collapsible>
@@ -270,7 +292,12 @@ export default async function Dashboard() {
             <Button variant="secondary">Secondary</Button>
 
             <Link
-              href={"/dashboard/your-balance"}
+              href={{
+                pathname: "/dashboard/your-balance",
+                query: {
+                  userAddress
+                }
+              }}
               className={buttonVariants({ variant: "default" })}
               prefetch={true}
             >
@@ -282,7 +309,7 @@ export default async function Dashboard() {
           <CardHeader>
             <CardTitle>Activity in Block</CardTitle>
             <CardDescription>
-              Most recent activity in last confirmed block
+              Total of {totalActivityCount} Runes activity in last confirmed block {apiStatus?.block_height}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -293,7 +320,7 @@ export default async function Dashboard() {
             >
               <div className="flex items-center justify-between space-x-4 px-4">
                 <h4 className="text-sm font-semibold">
-                  Most recent activity in last confirmed block
+                  3 most recent activity in last confirmed block
                 </h4>
                 <CollapsibleTrigger asChild>
                   <Button variant="ghost" size="sm" className="w-9 p-0">
@@ -327,7 +354,18 @@ export default async function Dashboard() {
           <CardFooter className="flex items-center justify-between">
             <Button variant="secondary">Secondary</Button>
 
-            <Button>View More</Button>
+            <Link
+              href={{
+                pathname: "/dashboard/recent-block-activity",
+                query: {
+                  userAddress
+                }
+              }}
+              className={buttonVariants({ variant: "default" })}
+              prefetch={true}
+            >
+              View More
+            </Link>
           </CardFooter>
         </Card>
       </div>

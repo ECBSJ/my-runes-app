@@ -1,6 +1,6 @@
 "use client"
 import * as React from "react"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 
 import {
   ColumnDef,
@@ -32,6 +32,10 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
+import { userSession } from "@/app/utils/ConnectWallet"
+
+let userAddress: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -69,22 +73,36 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter By Runes Name or ID..."
-          value={
-            table.getColumn("name")
-              ? (table.getColumn("name")?.getFilterValue() as string)
-              : (table.getColumn("rune_id")?.getFilterValue() as string)
-          }
-          onChange={event => {
-            if (table.getColumn("name")) {
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            } else {
-              table.getColumn("rune_id")?.setFilterValue(event.target.value)
+        <div className="flex items-center justify-start gap-4">
+          <Link
+              href={{
+                pathname: "/dashboard",
+                query: {
+                  userAddress
+                }
+              }}
+              className={buttonVariants({ variant: "secondary" })}
+              prefetch={true}
+            >
+              Dashboard
+            </Link>
+          <Input
+            placeholder="Filter By Runes Name or ID..."
+            value={
+              table.getColumn("name")
+                ? (table.getColumn("name")?.getFilterValue() as string)
+                : (table.getColumn("rune_id")?.getFilterValue() as string)
             }
-          }}
-          className="max-w-sm"
-        />
+            onChange={event => {
+              if (table.getColumn("name")) {
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              } else {
+                table.getColumn("rune_id")?.setFilterValue(event.target.value)
+              }
+            }}
+            className="max-w-sm"
+          />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

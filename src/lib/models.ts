@@ -4,6 +4,7 @@ export type AddressBalances = {
   id: string
   name: string
   spaced_name: string
+  symbol: string
 }
 
 export function addressBalancesToClient(data: any) {
@@ -12,7 +13,8 @@ export function addressBalancesToClient(data: any) {
     balance: +data.balance,
     id: data.rune.id,
     name: data.rune.name,
-    spaced_name: data.rune.spaced_name
+    spaced_name: data.rune.spaced_name,
+    symbol: data.symbol
   }
 }
 
@@ -24,9 +26,10 @@ export type AddressActivityForRune = {
   block_height: number
   tx_id: string
   timestamp: number
+  symbol: string
 }
 
-export function addressActivityForRuneToClient(data: any, id: string) {
+export function addressActivityForRuneToClient(data: any, id: string, symbol: string) {
   return {
     rune_id: id,
     address: data.address,
@@ -34,7 +37,8 @@ export function addressActivityForRuneToClient(data: any, id: string) {
     operation: data.operation,
     block_height: data.location.block_height,
     tx_id: data.location.tx_id,
-    timestamp: data.location.timestamp
+    timestamp: data.location.timestamp,
+    symbol: symbol
   }
 }
 

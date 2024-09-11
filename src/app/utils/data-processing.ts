@@ -16,21 +16,27 @@ export async function getAddressBalances(address: string) {
     address
   })
 
-  let addressBalances: AddressBalances[] = response.data.results.map(
-    addressBalancesToClient
-  )
+  let addressBalances: AddressBalances[] = response.data.results.map(async (o: any) => {
+    let { symbol } = await getRunesEtchingInfo(o.rune.id)
+    o.symbol = symbol
+    let finalObject = addressBalancesToClient(o)
+    return finalObject
+  })
 
-  addressBalances.sort(
+  let completedArrayOfObjects = await Promise.all(addressBalances)
+
+  completedArrayOfObjects.sort(
     (a: AddressBalances, b: AddressBalances) => b.balance - a.balance
   )
 
-  return addressBalances
+  return completedArrayOfObjects
 }
 
 export async function getYourRunesActivity(data: AddressBalances[]) {
   let responses = data.map(async eachRune => {
     let id = eachRune.id
     let address = eachRune.address
+    let symbol = eachRune.symbol
 
     let response = await axios.post("/api/address-activity", {
       id,
@@ -39,7 +45,7 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
 
     let results: AddressActivityForRune[] = response.data.results.map(
       (data: any) => {
-        let result = addressActivityForRuneToClient(data, id)
+        let result = addressActivityForRuneToClient(data, id, symbol)
         return result
       }
     )

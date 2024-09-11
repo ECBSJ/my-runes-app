@@ -1,17 +1,18 @@
 "use client"
 
-import { userSession } from "@/app/utils/ConnectWallet"
 import { columns } from "../../../components/columns/columns-activity"
 import { DataTable } from "../../../components/data-table"
 import {
   getAddressBalances,
   getYourRunesActivity
 } from "@/app/utils/data-processing"
+import { useSearchParams } from "next/navigation"
 
 export default async function YourActivity() {
-  let address: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
+  const searchParams = useSearchParams()
+  let userAddress = searchParams.get("userAddress")!
 
-  const response = await getAddressBalances(address)
+  const response = await getAddressBalances(userAddress)
   let response1 = await getYourRunesActivity(response)
 
   return (

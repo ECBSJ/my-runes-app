@@ -1,14 +1,15 @@
-"use client"
+'use client'
 
-import { userSession } from "@/app/utils/ConnectWallet"
 import { columns } from "../../../components/columns/columns-balances"
 import { DataTable } from "../../../components/data-table"
 import { getAddressBalances } from "@/app/utils/data-processing"
+import { useSearchParams } from "next/navigation"
 
 export default async function YourBalances() {
-  let address: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
+  const searchParams = useSearchParams()
+  let userAddress = searchParams.get("userAddress")!
 
-  const response = await getAddressBalances(address)
+  const response = await getAddressBalances(userAddress)
 
   return (
     <div className="container mx-auto py-10 mt-10">

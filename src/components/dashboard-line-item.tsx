@@ -11,13 +11,16 @@ type DashboardLineItemParams = {
   c?: number | string
   // amount
   d: number
+  // symbol
+  e?: string
 }
 
 export default function DashboardLineItem({
   a,
   b,
   c,
-  d
+  d,
+  e
 }: DashboardLineItemParams) {
   return (
     <div className="rounded-md border px-4 py-3 font-mono text-sm flex justify-between items-center my-3">
@@ -31,7 +34,8 @@ export default function DashboardLineItem({
         </>
       ) : null}
       <Separator orientation="horizontal" />
-      <span>{d}</span>
+      <span>{d.toLocaleString()}</span>
+      <span className="text-2xl">&nbsp;{e}</span>
     </div>
   )
 }

@@ -18,6 +18,7 @@ type Data = {
   id: string
   name: string
   spaced_name: string
+  symbol: string
 }
 
 export const columns: ColumnDef<Data>[] = [
@@ -53,6 +54,15 @@ export const columns: ColumnDef<Data>[] = [
       }).format(balance)
 
       return <div className="text-right font-medium">{formatted}</div>
+    }
+  },
+  {
+    accessorKey: "symbol",
+    header: "Symbol",
+    cell: ({ row }) => {
+      const symbol: string = row.getValue("symbol")
+
+      return <span className="text-4xl">{symbol}</span>
     }
   },
   {
