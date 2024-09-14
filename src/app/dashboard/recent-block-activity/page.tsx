@@ -1,8 +1,6 @@
-"use client"
-
-import { columns } from "../../../components/columns/columns-block-activity"
-import { DataTable } from "../../../components/data-table"
-import { getApiStatus, getBlockActivity } from "@/app/utils/data-processing"
+import { columns } from "@/components/columns/columns-block-activity"
+import { DataTable } from "@/components/data-table"
+import { getApiStatus, getBlockActivity } from "@/lib/data"
 
 export default async function BlockActivity() {
   let apiStatus = await getApiStatus()

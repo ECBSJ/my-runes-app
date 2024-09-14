@@ -33,7 +33,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { userSession } from "@/app/utils/ConnectWallet"
+import { userSession } from "@/components/connect-wallet"
 
 let userAddress: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
 

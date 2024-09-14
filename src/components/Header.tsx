@@ -3,7 +3,7 @@ import ModeToggle from "./dark-mode-toggle"
 import dynamic from 'next/dynamic';
 import Link from "next/link";
 
-const ConnectWallet = dynamic(() => import('@/app/utils/ConnectWallet'), {
+const ConnectWallet = dynamic(() => import('@/components/connect-wallet'), {
   ssr: false
 });
 
@@ -21,14 +21,14 @@ export default function Header() {
           />        
         </Link>
         <Link
-          href={"/dashboard/your-activity"}
+          href={"/dashboard/activity"}
           className={buttonVariants({ variant: "link" })}
           prefetch={true}
         >
           Activity
         </Link>
         <Link
-          href={"/dashboard/your-balances"}
+          href={"/dashboard/balances"}
           className={buttonVariants({ variant: "link" })}
           prefetch={true}
         >

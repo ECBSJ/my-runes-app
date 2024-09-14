@@ -8,11 +8,11 @@ import {
   blockActivityToClient,
   type ApiStatus,
   type Etching
-} from "@/lib/models"
+} from "@/types"
 import { mostFrequent } from "./helpers"
 
 export async function getAddressBalances(address: string) {
-  let response = await axios.post("/api/address-balances", {
+  let response = await axios.post(process.env.LOCALHOST + "/api/address-balances", {
     address
   })
 
@@ -38,7 +38,7 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
     let address = eachRune.address
     let symbol = eachRune.symbol
 
-    let response = await axios.post("/api/address-activity", {
+    let response = await axios.post(process.env.LOCALHOST + "/api/address-activity", {
       id,
       address
     })
@@ -64,7 +64,7 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
 }
 
 export async function getBlockActivity(block_height: string) {
-  let response = await axios.post("/api/block-activity", {
+  let response = await axios.post(process.env.LOCALHOST + "/api/block-activity", {
     block_height
   })
 
@@ -80,14 +80,14 @@ export async function getBlockActivity(block_height: string) {
 }
 
 export async function getApiStatus() {
-  let response = await axios.get("/api/status")
+  let response = await axios.get(process.env.LOCALHOST + "/api/status")
   let api_status: ApiStatus = response.data
 
   return api_status
 }
 
 export async function getRunesEtchingInfo(id: any): Promise<Etching> {
-  let response = await axios.post("/api/get-etching", {
+  let response = await axios.post(process.env.LOCALHOST + "/api/get-etching", {
     id
   })
 

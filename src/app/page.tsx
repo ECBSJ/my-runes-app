@@ -2,11 +2,11 @@
 
 import dynamic from 'next/dynamic';
 import { UserSession } from '@stacks/connect';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 
-const ConnectWallet = dynamic(() => import('@/app/utils/ConnectWallet'), {
+const ConnectWallet = dynamic(() => import('@/components/connect-wallet'), {
   ssr: false
 });
 

@@ -1,4 +1,5 @@
-export async function GET() {
+export async function GET(req: Request) {
+
   let response = await fetch("https://api.hiro.so/runes/v1/", {
     method: "GET",
     cache: "no-store"

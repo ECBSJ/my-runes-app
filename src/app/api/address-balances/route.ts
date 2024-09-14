@@ -10,6 +10,6 @@ export async function POST(req: Request) {
   )
 
   let data = await response.json()
-
+  
   return Response.json(data)
 }
