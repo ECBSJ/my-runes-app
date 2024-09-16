@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import { Columns3, LayoutGrid } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -85,7 +86,7 @@ export function DataTable<TData, TValue>({
               className={buttonVariants({ variant: "secondary" })}
               prefetch={true}
             >
-              Dashboard
+              <LayoutGrid className="mr-1.5 w-4"/>Dashboard
             </Link>
           <Input
             placeholder="Filter By Runes Name"
@@ -99,7 +100,7 @@ export function DataTable<TData, TValue>({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns
+              <Columns3 className="mr-1.5 w-4"/>Columns
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
