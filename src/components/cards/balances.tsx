@@ -14,7 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/components/ui/collapsible"
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, WalletCards } from "lucide-react"
 import DashboardLineItem from "@/components/dashboard-line-item"
 import Link from "next/link"
 import { useState } from "react"
@@ -31,7 +31,7 @@ export default function BalancesCard({ addressBalances, userAddress }: props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Runes Balances</CardTitle>
+        <CardTitle className="flex items-center justify-start gap-2"><WalletCards />Your Runes Balances</CardTitle>
         <CardDescription>Snapshot of your Runes balances</CardDescription>
       </CardHeader>
       <CardContent>
@@ -53,52 +53,56 @@ export default function BalancesCard({ addressBalances, userAddress }: props) {
           </div>
           <DashboardLineItem
             a={
-              addressBalances ? addressBalances[0].spaced_name : "."
+              addressBalances[0] != undefined ? addressBalances[0].spaced_name : "."
             }
-            b={addressBalances ? addressBalances[0].id : "."}
-            d={addressBalances ? addressBalances[0].balance : 0}
-            e={addressBalances ? addressBalances[0].symbol : "."}
+            b={addressBalances[0] != undefined ? addressBalances[0].id : "."}
+            d={addressBalances[0] != undefined ? addressBalances[0].balance : 0}
+            e={addressBalances[0] != undefined ? addressBalances[0].symbol : "."}
           />
           <CollapsibleContent className="space-y-2">
             <DashboardLineItem
               a={
-                addressBalances
+                addressBalances[1] != undefined
                   ? addressBalances[1].spaced_name
                   : "."
               }
-              b={addressBalances ? addressBalances[1].id : "."}
-              d={addressBalances ? addressBalances[1].balance : 0}
-              e={addressBalances ? addressBalances[1].symbol : "."}
+              b={addressBalances[1] != undefined ? addressBalances[1].id : "."}
+              d={addressBalances[1] != undefined ? addressBalances[1].balance : 0}
+              e={addressBalances[1] != undefined ? addressBalances[1].symbol : "."}
 
             />
             <DashboardLineItem
               a={
-                addressBalances
+                addressBalances[2] != undefined
                   ? addressBalances[2].spaced_name
                   : "."
               }
-              b={addressBalances ? addressBalances[2].id : "."}
-              d={addressBalances ? addressBalances[2].balance : 0}
-              e={addressBalances ? addressBalances[2].symbol : "."}
+              b={addressBalances[2] != undefined ? addressBalances[2].id : "."}
+              d={addressBalances[2] != undefined ? addressBalances[2].balance : 0}
+              e={addressBalances[2] != undefined ? addressBalances[2].symbol : "."}
             />
           </CollapsibleContent>
         </Collapsible>
       </CardContent>
       <CardFooter className="flex items-center justify-between">
-        <Button variant="secondary">Secondary</Button>
-
-        <Link
-          href={{
-            pathname: "/dashboard/balances",
-            query: {
-              userAddress
-            }
-          }}
-          className={buttonVariants({ variant: "default" })}
-          prefetch={true}
-        >
-          View More
-        </Link>
+        <Button variant="secondary" onClick={() => window.open(`https://ordinals.hiro.so/address/${userAddress}`, '_blank')}>Ordinals?</Button>
+        {addressBalances.length > 0 ? (
+          <Link
+            href={{
+              pathname: "/dashboard/balances",
+              query: {
+                userAddress
+              }
+            }}
+            className={buttonVariants({ variant: "default" })}
+            prefetch={true}
+          >
+            View More
+          </Link>
+        ) : (
+          <Button disabled>No Runes Found</Button>
+        )}
+        
       </CardFooter>
     </Card>
   )

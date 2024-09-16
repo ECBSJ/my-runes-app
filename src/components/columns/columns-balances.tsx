@@ -86,8 +86,7 @@ export const columns: ColumnDef<Data>[] = [
               Copy Runes ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Etching</DropdownMenuItem>
-            <DropdownMenuItem>View Transaction</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.open(`https://magiceden.us/runes/${data.spaced_name}`, '_blank')}>View Etching</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

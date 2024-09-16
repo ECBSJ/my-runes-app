@@ -1,4 +1,6 @@
-import { Button, buttonVariants } from "@/components/ui/button"
+"use client"
+
+import { buttonVariants } from "@/components/ui/button"
 import ModeToggle from "./dark-mode-toggle"
 import dynamic from 'next/dynamic';
 import Link from "next/link";
@@ -21,37 +23,30 @@ export default function Header() {
           />        
         </Link>
         <Link
-          href={"/dashboard/activity"}
+          href={"https://leather.io/learn/bitcoin-runes"}
+          target="_blank"
           className={buttonVariants({ variant: "link" })}
-          prefetch={true}
         >
-          Activity
+          What are Runes?
         </Link>
         <Link
-          href={"/dashboard/balances"}
+          href={"https://www.hiro.so/blog/introducing-the-runes-api"}
+          target="_blank"
           className={buttonVariants({ variant: "link" })}
-          prefetch={true}
         >
-          Balances
+          What is the Runes API?
         </Link>
         <Link
-          href={"/dashboard/recent-block-activity"}
+          href={"https://github.com/hirosystems/runehook"}
+          target="_blank"
           className={buttonVariants({ variant: "link" })}
-          prefetch={true}
         >
-          Block
-        </Link>
-        <Link
-          href={"/dashboard"}
-          className={buttonVariants({ variant: "link" })}
-          prefetch={true}
-        >
-          Suggested
+          Runehook
         </Link>
       </div>
       <div className="flex items-center justify-between gap-x-8">
         <ModeToggle />
-        <ConnectWallet />
+        <ConnectWallet buttonLabel="Connect"/>
       </div>
     </header>
   )

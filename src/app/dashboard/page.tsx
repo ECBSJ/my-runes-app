@@ -11,7 +11,6 @@ import Activity from "@/components/cards/activity"
 import FeaturedCard from "@/components/cards/featured"
 
 async function retrieveAllData(userAddress: string) {
-  console.log("i ran")
   
   let addressBalances = await getAddressBalances(userAddress)
 

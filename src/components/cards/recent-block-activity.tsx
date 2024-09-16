@@ -14,7 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/components/ui/collapsible"
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, SquareActivity } from "lucide-react"
 import DashboardLineItem from "@/components/dashboard-line-item"
 import Link from "next/link"
 import { useState } from "react"
@@ -34,7 +34,7 @@ export default function BlockActivity({ blockActivity, totalActivityCount, apiSt
   return (
     <Card>
     <CardHeader>
-      <CardTitle>Activity in Block</CardTitle>
+      <CardTitle className="flex items-center justify-start gap-2"><SquareActivity />Activity in Block</CardTitle>
       <CardDescription>
         Total of {totalActivityCount} Runes activity in last confirmed block {apiStatus?.block_height}
       </CardDescription>
@@ -79,7 +79,7 @@ export default function BlockActivity({ blockActivity, totalActivityCount, apiSt
       </Collapsible>
     </CardContent>
     <CardFooter className="flex items-center justify-between">
-      <Button variant="secondary">Secondary</Button>
+      <Button variant="secondary" onClick={() => window.open(`https://ordiscan.com/block/${apiStatus?.block_height}/runes`, '_blank')}>View Block</Button>
       <Link
         href={{
           pathname: "/dashboard/recent-block-activity",

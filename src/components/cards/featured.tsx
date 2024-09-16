@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { type ApiStatus, type Etching } from "@/types"
+import { Sparkles } from "lucide-react"
 
 type props = {
   userAddress: string
@@ -24,7 +25,7 @@ export default function FeaturedCard({ userAddress, featuredRunes, apiStatus }: 
   return (
     <Card>
     <CardHeader>
-      <CardTitle>Featured Runes</CardTitle>
+      <CardTitle className="flex items-center justify-start gap-2"><Sparkles />Featured Runes</CardTitle>
       <CardDescription>
         Most active Runes in recent Bitcoin block height{" "}
         {apiStatus?.block_height}
@@ -41,9 +42,9 @@ export default function FeaturedCard({ userAddress, featuredRunes, apiStatus }: 
         <span className="text-8xl">{featuredRunes?.symbol}</span>
         <Separator orientation="horizontal" />
 
-        <span className="flex flex-col justify-between gap-2">
-          <p className="font-semibold">Current Supply:</p>
-          {Number(featuredRunes?.supply.current).toLocaleString()}
+        <span className="flex flex-col">
+          <p className="font-semibold m-0 p-0">Current Supply:</p> <br />
+          {Number(featuredRunes?.supply.current).toLocaleString() + featuredRunes?.symbol}
         </span>
       </div>
       <span className="flex items-center justify-start gap-2">
@@ -60,14 +61,14 @@ export default function FeaturedCard({ userAddress, featuredRunes, apiStatus }: 
       <span></span>
     </CardContent>
     <CardFooter className="flex items-center justify-between">
-      <Button variant="secondary">Secondary</Button>
+      <Button variant="secondary" onClick={() => window.open(`https://ordiscan.com/rune/${featuredRunes?.name}`, '_blank')}>View Etching</Button>
       <Link
         href={`https://magiceden.us/runes/${featuredRunes?.spaced_name}`}
         className={buttonVariants({ variant: "default" })}
         prefetch={true}
         target="_blank"
       >
-        View More
+        View Market
       </Link>
     </CardFooter>
   </Card>

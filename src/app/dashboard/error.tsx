@@ -22,7 +22,7 @@ export default function Error({
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
-          Something went wrong! <br /> Try refreshing the page.
+          Something went wrong! <br /> Did you login with a Bitcoin Web3 wallet? <br /> Is there an issue with the API calls? <br /> Or try refreshing the page?
         </AlertDescription>
       </Alert>
     </main>

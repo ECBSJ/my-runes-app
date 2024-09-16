@@ -33,9 +33,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { userSession } from "@/components/connect-wallet"
-
-let userAddress: string = userSession.loadUserData().profile.btcAddress.p2tr.mainnet
+import { useSearchParams } from "next/navigation"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -70,6 +68,9 @@ export function DataTable<TData, TValue>({
     }
   })
 
+  const searchParams = useSearchParams()
+  const userAddress = searchParams.get("userAddress")
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -87,18 +88,10 @@ export function DataTable<TData, TValue>({
               Dashboard
             </Link>
           <Input
-            placeholder="Filter By Runes Name or ID..."
-            value={
-              table.getColumn("name")
-                ? (table.getColumn("name")?.getFilterValue() as string)
-                : (table.getColumn("rune_id")?.getFilterValue() as string)
-            }
+            placeholder="Filter By Runes Name"
+            value={table.getColumn("name")?.getFilterValue() as string}
             onChange={event => {
-              if (table.getColumn("name")) {
                 table.getColumn("name")?.setFilterValue(event.target.value)
-              } else {
-                table.getColumn("rune_id")?.setFilterValue(event.target.value)
-              }
             }}
             className="max-w-sm"
           />

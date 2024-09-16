@@ -27,9 +27,11 @@ export type AddressActivityForRune = {
   tx_id: string
   timestamp: number
   symbol: string
+  name: string
+  spaced_name: string
 }
 
-export function addressActivityForRuneToClient(data: any, id: string, symbol: string) {
+export function addressActivityForRuneToClient(data: any, id: string, symbol: string, name: string, spaced_name: string) {
   return {
     rune_id: id,
     address: data.address,
@@ -38,7 +40,9 @@ export function addressActivityForRuneToClient(data: any, id: string, symbol: st
     block_height: data.location.block_height,
     tx_id: data.location.tx_id,
     timestamp: data.location.timestamp,
-    symbol: symbol
+    symbol: symbol,
+    name: name,
+    spaced_name: spaced_name
   }
 }
 

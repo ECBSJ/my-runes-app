@@ -40,7 +40,11 @@ export const columns: ColumnDef<Data>[] = [
   },
   {
     accessorKey: "id",
-    header: "Rune ID"
+    header: "ID"
+  },
+  {
+    accessorKey: "name",
+    header: "Name"
   },
   {
     accessorKey: "operation",
@@ -102,8 +106,8 @@ export const columns: ColumnDef<Data>[] = [
               Copy TX ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Etching</DropdownMenuItem>
-            <DropdownMenuItem>View Transaction</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.open(`https://magiceden.us/runes/${data.spaced_name}`, '_blank')}>View Etching</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.open(`https://mempool.space/tx/${data.tx_id}`, '_blank')}>View Transaction</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

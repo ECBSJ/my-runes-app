@@ -14,7 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/components/ui/collapsible"
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, FolderKanban } from "lucide-react"
 import DashboardLineItem from "@/components/dashboard-line-item"
 import Link from "next/link"
 import { useState } from "react"
@@ -32,8 +32,8 @@ export default function Activity({ addressActivityForRune, userAddress }: props)
   return (
     <Card>
     <CardHeader>
-      <CardTitle>Your Runes Activity</CardTitle>
-      <CardDescription>Most recent Runes activity</CardDescription>
+      <CardTitle className="flex items-center justify-start gap-2"><FolderKanban />Your Runes Activity</CardTitle>
+      <CardDescription>Most recent Runes activity by block height</CardDescription>
     </CardHeader>
     <CardContent>
       <Collapsible
@@ -43,7 +43,7 @@ export default function Activity({ addressActivityForRune, userAddress }: props)
       >
         <div className="flex items-center justify-between space-x-4 px-4">
           <h4 className="text-sm font-semibold">
-            You have 3 recent Runes activity
+            Your recent Runes activity
           </h4>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm" className="w-9 p-0">
@@ -54,96 +54,100 @@ export default function Activity({ addressActivityForRune, userAddress }: props)
         </div>
         <DashboardLineItem
           a={
-            addressActivityForRune
-              ? addressActivityForRune[0].rune_id
+            addressActivityForRune[0] != undefined
+              ? addressActivityForRune[0].spaced_name
               : "."
           }
           b={
-            addressActivityForRune
+            addressActivityForRune[0] != undefined
               ? addressActivityForRune[0].operation
               : "."
           }
           c={
-            addressActivityForRune
+            addressActivityForRune[0] != undefined
               ? addressActivityForRune[0].block_height
               : "."
           }
           d={
-            addressActivityForRune ? addressActivityForRune[0].amount : 0
+            addressActivityForRune[0] != undefined ? addressActivityForRune[0].amount : 0
           }
           e={
-            addressActivityForRune ? addressActivityForRune[0].symbol : ""
+            addressActivityForRune[0] != undefined ? addressActivityForRune[0].symbol : ""
           }
 
         />
         <CollapsibleContent className="space-y-2">
           <DashboardLineItem
             a={
-              addressActivityForRune
-                ? addressActivityForRune[1].rune_id
+              addressActivityForRune[1] != undefined
+                ? addressActivityForRune[1].spaced_name
                 : "."
             }
             b={
-              addressActivityForRune
+              addressActivityForRune[1] != undefined
                 ? addressActivityForRune[1].operation
                 : "."
             }
             c={
-              addressActivityForRune
+              addressActivityForRune[1] != undefined
                 ? addressActivityForRune[1].block_height
                 : "."
             }
             d={
-              addressActivityForRune
+              addressActivityForRune[1] != undefined
                 ? addressActivityForRune[1].amount
                 : 0
             }
             e={
-              addressActivityForRune ? addressActivityForRune[1].symbol : ""
+              addressActivityForRune[1] != undefined ? addressActivityForRune[1].symbol : ""
             }
           />
           <DashboardLineItem
             a={
-              addressActivityForRune
-                ? addressActivityForRune[2].rune_id
+              addressActivityForRune[2] != undefined
+                ? addressActivityForRune[2].spaced_name
                 : "."
             }
             b={
-              addressActivityForRune
+              addressActivityForRune[2] != undefined
                 ? addressActivityForRune[2].operation
                 : "."
             }
             c={
-              addressActivityForRune
+              addressActivityForRune[2] != undefined
                 ? addressActivityForRune[2].block_height
                 : "."
             }
             d={
-              addressActivityForRune
+              addressActivityForRune[2] != undefined
                 ? addressActivityForRune[2].amount
                 : 0
             }
             e={
-              addressActivityForRune ? addressActivityForRune[2].symbol : ""
+              addressActivityForRune[2] != undefined ? addressActivityForRune[2].symbol : ""
             }  
           />
         </CollapsibleContent>
       </Collapsible>
     </CardContent>
-    <CardFooter className="flex items-center justify-between">
-      <Button variant="secondary">Secondary</Button>
-      <Link
-        href={{
-          pathname: "/dashboard/activity",
-          query: {
-            userAddress
-          }
-        }}
-        className={buttonVariants({ variant: "default" })}
-        prefetch={true}
-      >
-        View More
-      </Link>
+    <CardFooter className="flex items-center justify-end">
+      {addressActivityForRune.length > 0 ? (
+        <Link
+          href={{
+            pathname: "/dashboard/activity",
+            query: {
+              userAddress
+            }
+          }}
+          className={buttonVariants({ variant: "default" })}
+          prefetch={true}
+        >
+          View More
+        </Link>
+      ) : (
+        <Button disabled>No Activity</Button>
+      )}
+      
     </CardFooter>
   </Card>
   )
