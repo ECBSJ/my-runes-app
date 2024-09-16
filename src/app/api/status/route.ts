@@ -1,4 +1,4 @@
-export async function GET(req: Request) {
+export async function GET() {
 
   let response = await fetch("https://api.hiro.so/runes/v1/", {
     method: "GET",

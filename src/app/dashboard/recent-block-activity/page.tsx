@@ -4,7 +4,7 @@ import { getApiStatus, getBlockActivity } from "@/lib/data"
 
 export default async function BlockActivity() {
   let apiStatus = await getApiStatus()
-  let { results, totalRunesActivity, mostFrequentRunes } =
+  let { results } =
     await getBlockActivity(apiStatus.block_height.toString())
 
   return (
