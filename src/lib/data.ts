@@ -1,4 +1,3 @@
-import axios from "axios"
 import {
   type AddressBalances,
   addressBalancesToClient,
@@ -12,15 +11,22 @@ import {
 import { mostFrequent } from "./helpers"
 
 export async function getAddressBalances(address: string) {
-  let response = await axios.post(process.env.URL + "/api/address-balances", {
-    address
-  })
 
-  if (response.data.results.length === 0) {
+  const response = await fetch(
+    `https://api.hiro.so/runes/v1/addresses/${address}/balances?offset=0&limit=60`,
+    {
+      method: "GET",
+      cache: "no-store"
+    }
+  )
+
+  let data = await response.json()
+
+  if (data.results.length === 0) {
     return []    
   }
 
-  let addressBalances: AddressBalances[] = response.data.results.map(async (o: any) => {
+  let addressBalances: AddressBalances[] = data.results.map(async (o: any) => {
     let { symbol } = await getRunesEtchingInfo(o.rune.id)
     o.symbol = symbol
     let finalObject = addressBalancesToClient(o)
@@ -49,12 +55,17 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
     let name = eachRune.name
     let spaced_name = eachRune.spaced_name
 
-    let response = await axios.post(process.env.URL + "/api/address-activity", {
-      id,
-      address
-    })
+    const response = await fetch(
+      `https://api.hiro.so/runes/v1/etchings/${id}/activity/${address}?offset=0&limit=60`,
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    )
+  
+    let data = await response.json()
 
-    let results: AddressActivityForRune[] = response.data.results.map(
+    let results: AddressActivityForRune[] = data.results.map(
       (data: any) => {
         let result = addressActivityForRuneToClient(data, id, symbol, name, spaced_name)
         return result
@@ -75,13 +86,19 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
 }
 
 export async function getBlockActivity(block_height: string) {
-  let response = await axios.post(process.env.URL + "/api/block-activity", {
-    block_height
-  })
+  let response = await fetch(
+    `https://api.hiro.so/runes/v1/blocks/${block_height}/activity?offset=0&limit=60`,
+    {
+      method: "GET",
+      cache: "no-store"
+    }
+  )
 
-  let totalRunesActivity: number = response.data.total
+  let data = await response.json()
 
-  let results: BlockActivity[] = response.data.results.map(
+  let totalRunesActivity: number = data.total
+
+  let results: BlockActivity[] = data.results.map(
     blockActivityToClient
   )
 
@@ -91,16 +108,24 @@ export async function getBlockActivity(block_height: string) {
 }
 
 export async function getApiStatus() {
-  let response = await axios.get(process.env.URL + "/api/status")
-  let api_status: ApiStatus = response.data
+  let response = await fetch("https://api.hiro.so/runes/v1/", {
+    method: "GET",
+    cache: "no-store"
+  })
+  let data = await response.json()
+
+  let api_status: ApiStatus = data
 
   return api_status
 }
 
 export async function getRunesEtchingInfo(id: any): Promise<Etching> {
-  let response = await axios.post(process.env.URL + "/api/get-etching", {
-    id
+  let response = await fetch(`https://api.hiro.so/runes/v1/etchings/${id}`, {
+    method: "GET",
+    cache: "no-store"
   })
 
-  return response.data
+  let data = await response.json()
+
+  return data
 }
