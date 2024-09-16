@@ -12,7 +12,7 @@ import {
 import { mostFrequent } from "./helpers"
 
 export async function getAddressBalances(address: string) {
-  let response = await axios.post(process.env.LOCALHOST + "/api/address-balances", {
+  let response = await axios.post(process.env.URL + "/api/address-balances", {
     address
   })
 
@@ -41,7 +41,7 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
   if (data.length === 0) {
     return []
   }
-  
+
   let responses = data.map(async eachRune => {
     let id = eachRune.id
     let address = eachRune.address
@@ -49,7 +49,7 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
     let name = eachRune.name
     let spaced_name = eachRune.spaced_name
 
-    let response = await axios.post(process.env.LOCALHOST + "/api/address-activity", {
+    let response = await axios.post(process.env.URL + "/api/address-activity", {
       id,
       address
     })
@@ -75,7 +75,7 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
 }
 
 export async function getBlockActivity(block_height: string) {
-  let response = await axios.post(process.env.LOCALHOST + "/api/block-activity", {
+  let response = await axios.post(process.env.URL + "/api/block-activity", {
     block_height
   })
 
@@ -91,14 +91,14 @@ export async function getBlockActivity(block_height: string) {
 }
 
 export async function getApiStatus() {
-  let response = await axios.get(process.env.LOCALHOST + "/api/status")
+  let response = await axios.get(process.env.URL + "/api/status")
   let api_status: ApiStatus = response.data
 
   return api_status
 }
 
 export async function getRunesEtchingInfo(id: any): Promise<Etching> {
-  let response = await axios.post(process.env.LOCALHOST + "/api/get-etching", {
+  let response = await axios.post(process.env.URL + "/api/get-etching", {
     id
   })
 
