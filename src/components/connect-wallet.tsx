@@ -1,11 +1,11 @@
 "use client"
 
-import { showConnect, authenticate } from "@stacks/connect"
+import { authenticate } from "@stacks/connect"
 import { Button } from "@/components/ui/button"
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation"
 import { UserSession } from "@stacks/connect"
 import { useEffect, useState } from "react"
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { useSelectedLayoutSegment } from "next/navigation"
 
 export const userSession = new UserSession()
 
@@ -15,7 +15,7 @@ type props = {
 
 export default function ConnectWallet({ buttonLabel }: props) {
   const segment = useSelectedLayoutSegment()
-  
+
   const [iseConnected, setIsConnected] = useState(false)
 
   const router = useRouter()
@@ -38,7 +38,7 @@ export default function ConnectWallet({ buttonLabel }: props) {
   function disconnectWallet() {
     userSession.signUserOut()
     setIsConnected(false)
-    
+
     if (segment === null) {
       window.location.reload()
     } else {
@@ -49,7 +49,7 @@ export default function ConnectWallet({ buttonLabel }: props) {
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
       setIsConnected(true)
-    }  
+    }
   }, [])
 
   if (userSession.isUserSignedIn()) {
@@ -57,5 +57,4 @@ export default function ConnectWallet({ buttonLabel }: props) {
   } else {
     return <Button onClick={connectWallet}>{buttonLabel}</Button>
   }
-
 }

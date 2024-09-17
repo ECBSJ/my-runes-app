@@ -10,8 +10,9 @@ import {
 } from "@/types"
 import { mostFrequent } from "./helpers"
 
+// Get address' Runes balances /runes/v1/addresses/{address}/balances
+// https://docs.hiro.so/bitcoin/runes/api/balances/address
 export async function getAddressBalances(address: string) {
-
   const response = await fetch(
     `https://api.hiro.so/runes/v1/addresses/${address}/balances?offset=0&limit=60`,
     {
@@ -23,7 +24,7 @@ export async function getAddressBalances(address: string) {
   let data = await response.json()
 
   if (data.results.length === 0) {
-    return []    
+    return []
   }
 
   let addressBalances: AddressBalances[] = data.results.map(async (o: any) => {
@@ -42,8 +43,9 @@ export async function getAddressBalances(address: string) {
   return completedArrayOfObjects
 }
 
+// Get Runes activity for an address /runes/v1/etchings/{etching}/activity/{address}
+// https://docs.hiro.so/bitcoin/runes/api/activities/for-address
 export async function getYourRunesActivity(data: AddressBalances[]) {
-
   if (data.length === 0) {
     return []
   }
@@ -62,15 +64,13 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
         cache: "no-store"
       }
     )
-  
+
     let data = await response.json()
 
-    let results: AddressActivityForRune[] = data.results.map(
-      (data: any) => {
-        let result = addressActivityForRuneToClient(data, id, symbol, name, spaced_name)
-        return result
-      }
-    )
+    let results: AddressActivityForRune[] = data.results.map((data: any) => {
+      let result = addressActivityForRuneToClient(data, id, symbol, name, spaced_name)
+      return result
+    })
 
     return results
   })
@@ -78,13 +78,14 @@ export async function getYourRunesActivity(data: AddressBalances[]) {
   let arrayOfArrays = await Promise.all(responses)
   let flattenedArray = arrayOfArrays.flat(1)
   flattenedArray.sort(
-    (a: AddressActivityForRune, b: AddressActivityForRune) =>
-      b.timestamp - a.timestamp
+    (a: AddressActivityForRune, b: AddressActivityForRune) => b.timestamp - a.timestamp
   )
 
   return flattenedArray
 }
 
+// Get activity for a block /runes/v1/blocks/{block}/activity
+// https://docs.hiro.so/bitcoin/runes/api/activities/for-block
 export async function getBlockActivity(block_height: string) {
   let response = await fetch(
     `https://api.hiro.so/runes/v1/blocks/${block_height}/activity?offset=0&limit=60`,
@@ -98,15 +99,15 @@ export async function getBlockActivity(block_height: string) {
 
   let totalRunesActivity: number = data.total
 
-  let results: BlockActivity[] = data.results.map(
-    blockActivityToClient
-  )
+  let results: BlockActivity[] = data.results.map(blockActivityToClient)
 
   let mostFrequentRunes = mostFrequent(results, p => p.id)
 
   return { results, totalRunesActivity, mostFrequentRunes }
 }
 
+// Get API Status /runes/v1
+// https://docs.hiro.so/bitcoin/runes/api/info/status
 export async function getApiStatus() {
   let response = await fetch("https://api.hiro.so/runes/v1/", {
     method: "GET",
@@ -119,6 +120,8 @@ export async function getApiStatus() {
   return api_status
 }
 
+// Get etching /runes/v1/etchings/{etching}
+// https://docs.hiro.so/bitcoin/runes/api/etchings/get-etching
 export async function getRunesEtchingInfo(id: any): Promise<Etching> {
   let response = await fetch(`https://api.hiro.so/runes/v1/etchings/${id}`, {
     method: "GET",
