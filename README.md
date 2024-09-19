@@ -60,6 +60,7 @@ The easiest way to deploy your Next.js Runes app is to use the [Vercel Platform]
 Here are some suggestions you can further implement to this application. Just fork the code and start building!
 
 - Add connect compatibility with other Bitcoin wallets
+- Implement incrementation of `offset` query parameter if `results` returned from API endpoints are greater than 60.
 - Implement new cards or route segments for viewing data from other Runes API endpoints such as:
   - Get rune holders `/runes/v1/etchings/{etching}/holders`
   - Get all activity for a rune `/runes/v1/etchings/{etching}/activity`
