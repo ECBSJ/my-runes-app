@@ -24,7 +24,7 @@ export default function ConnectWallet({ buttonLabel }: props) {
     authenticate({
       userSession,
       appDetails: {
-        icon: "/HiroIcon-Rounded-Orange.png",
+        icon: window.location.origin + "/HiroIcon-Rounded-Orange.png",
         name: "My Runes App"
       },
       onFinish(payload) {
